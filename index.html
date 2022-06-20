@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Pikachu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <img src="./dokumentasi/pokeapi_256.png" alt="" style="width: 100px; height: 50px; display: inline-block;">
+    <p></p>
+    <h1>Get Pikachu</h1>
+    <center> <button id="getBtn" class="button1">Get!</button> </center>
+    <div id="container" class="container">
+        <span id="number"></span>
+        <span id="name"></span>
+        <div>
+            <img id="img" src="" alt="" />
+        </div>
+        <span id="type"></span>
+    </div>
+
+    <script>
+        const btn = document.getElementById('getBtn');
+
+        btn.addEventListener("click", function () {
+            fetchPokemons();
+        });
+
+        const container = document.getElementById('container');
+        const pokemons_number = 30;
+        const colors = {
+            grass: '#90EE90',
+            fire: '#F08080',
+            water: '#87CEFA',
+            bug: '#FFA07A',
+            poison: '#9370DB',
+            flying: '#DDA0DD',
+            electric: '#6495ED',
+            normal: '#DEB887',
+            ground: '#BDB76B'
+        };
+        
+        const main_types = Object.keys(colors);
+
+        const fetchPokemons = async () => {
+            for(let i = 1; i <= pokemons_number; i++) {
+                await getPokemon(i);    
+            }
+        }
+
+        const getPokemon = async id => {
+            const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
+            const response = await fetch(url);
+            const pokemon = await response.json();
+            console.log(pokemon);
+            createPokemonCard(pokemon);
+        }
+
+        function createPokemonCard(pokemon) {
+            const pokemonEl = document.createElement('div');
+                pokemonEl.classList.add('pokemon');
+            
+            const poke_types = pokemon.types.map(type => type.type.name);
+            const type = main_types.find(type => poke_types.indexOf(type) > -1);
+            const name = pokemon.name[0].toUpperCase() + pokemon.name.slice(1);
+            const color = colors[type];
+            
+            pokemonEl.style.backgroundColor = color;
+
+            const pokemonInnerHTML = `
+                <div class="img-container">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png" alt="">
+                </div>
+                <div class="info">
+                    <span class="number">#${pokemon.id}</span>
+                    <h3 class="name">${name}</h3>
+                    <small class="type">Type: <span>${type}</span></small>
+                </div>
+            `;
+
+            pokemonEl.innerHTML = pokemonInnerHTML;
+
+            container.appendChild(pokemonEl);
+        }
+    </script>
+</body>
+</html>
